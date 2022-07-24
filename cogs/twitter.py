@@ -16,9 +16,6 @@ bearer = ""
 ####################################### CODE #################################################################
 ##############################################################################################################
 ##############################################################################################################
-def validate_user(ctx):
-    return ctx.message.author.id == 559440854578626565 
-
 def write_img(url):
     idx = url.find('attachments/')
     length = len('attachments/')
@@ -39,19 +36,15 @@ class Twitter(commands.Cog):
     self.client = client
     self.init_tweepy()
     self.commands = []
+    
+    self.safety = False
+    self.print_errors = True
+    self.verbose = True
 
   def init_tweepy(self):
     auth = tweepy.OAuthHandler(con_key, con_sec) # authenticate 
     auth.set_access_token(acc_tok, acc_sec) # grant access 
     self.api = tweepy.API(auth, wait_on_rate_limit=True) # connect to API
-    #self.api = tweepy.Client(
-    #  bearer_token=bearer, 
-    #  consumer_key=con_key, 
-    #  consumer_secret=con_sec, 
-    #  access_token=acc_tok, 
-    #  access_token_secret=acc_sec, 
-    #  wait_on_rate_limit = True
-    #)
 
     try:
       self.api.verify_credentials()
@@ -62,24 +55,51 @@ class Twitter(commands.Cog):
   @commands.Cog.listener()
   async def on_ready(self):
     print("Bot started!")
+
+  def execute_command_(self, ctx):
+    if len(self.commands) > 0:
+      command = self.commands[0]
+      self.commands = self.commands[1:]
+      result = command.execute(self.api)
+      await ctx.send(f'```executed command -> {command.__str__(1)}```\n{result}' if self.verbose else f'{result}')
+      
+    await ctx.send('No more commands to execute 😈')
+
+##############################################################################################################
+##############################################################################################################
+####################################### TWEET COMMANDS #######################################################
+##############################################################################################################
+##############################################################################################################
     
   @commands.command(name='tweet')
   async def tweet(self, ctx, *args):
     content = ' '.join([word for word in args])
     self.commands.append(Tweet(content))
-    await ctx.send("❤️")
+
+    if self.safety:
+      await ctx.send("❤️")
+    else:
+      self.execute_command(ctx)
 
   @commands.command(name='reply')
   async def reply(self, ctx, url, *args):
     content = ' '.join([word for word in args])
     self.commands.append(Reply(content, url))
-    await ctx.send("❤️")
+    
+    if self.safety:
+      await ctx.send("❤️")
+    else:
+      self.execute_command(ctx)
 
   @commands.command(name='quote')
   async def quote_retweet(self, ctx, url, *args):
     content = ' '.join([word for word in args])
     self.commands.append(QuoteRetweet(content, url))
-    await ctx.send("❤️")
+
+    if self.safety:
+      await ctx.send("❤️")
+    else:
+      self.execute_command(ctx)
 
   @commands.command(name='friend')
   async def friend(self, ctx, *args):
@@ -94,7 +114,11 @@ class Twitter(commands.Cog):
     (success, file_name) = write_img(img_url)
     if success:
         self.commands.append(TweetWithImage(message, file_name, img_url))
-        await ctx.send("❤️")
+
+        if self.safety:
+          await ctx.send("❤️")
+        else:
+          self.execute_command(ctx)
     else:
         await ctx.send("Unable to retrieve image 😈")
 
@@ -105,7 +129,11 @@ class Twitter(commands.Cog):
     (success, file_name) = write_img(img_url)
     if success:
         self.commands.append(ReplyWithImage(message, reply_url, file_name, img_url))
-        await ctx.send("❤️")
+      
+        if self.safety:
+          await ctx.send("❤️")
+        else:
+          self.execute_command(ctx)
     else:
         await ctx.send("Unable to retrieve image 😈")
 
@@ -116,13 +144,23 @@ class Twitter(commands.Cog):
     (success, file_name) = write_img(img_url)
     if success:
         self.commands.append(QuoteRetweetWithImage(message, quote_url, file_name, img_url))
-        await ctx.send("❤️")
+      
+        if self.safety:
+          await ctx.send("❤️")
+        else:
+          self.execute_command(ctx)
     else:
         await ctx.send("Unable to retrieve image 😈")
 
+##############################################################################################################
+##############################################################################################################
+####################################### ADMIN COMMANDS #######################################################
+##############################################################################################################
+##############################################################################################################
+      
   @commands.command(name='popC')
-  @commands.check(validate_user)
-  async def pop_command(self, ctx, verbose: bool = True):
+  @commands.has_permissions(administrator=True)
+  async def pop_command(self, ctx):
     if len(self.commands) > 0:
       command = self.commands[0]
       self.commands = self.commands[1:]
@@ -132,46 +170,83 @@ class Twitter(commands.Cog):
     await ctx.send('No more commands to pop 😈')
 
   @commands.command(name='execC')
-  @commands.check(validate_user)
-  async def exec_command(self, ctx, verbose: bool = True):
-    if len(self.commands) > 0:
-      command = self.commands[0]
-      self.commands = self.commands[1:]
-      result = command.execute(self.api)
-      string = f'```executed command -> {command.__str__(1)}```\n{result}' if verbose else f'{result}'
-      await ctx.send(string)
-      return
-
-    await ctx.send('No more commands to execute 😈')
+  @commands.has_permissions(administrator=True)
+  async def exec_command(self, ctx):
+    self.execute_command_(ctx)
 
   @commands.command(name='listC')
-  @commands.check(validate_user)
-  async def list_commands(self, ctx, verbose: bool = True):
+  @commands.has_permissions(administrator=True)
+  async def list_commands(self, ctx):
     if len(self.commands) > 0:
       string = ''
       for command in self.commands:
-        string += command.__str__(verbose) + '\n'
+        string += command.__str__(self.verbose) + '\n'
       await ctx.send(f"```{string}```")
+      return
       
     await ctx.send('No more commands to display 😈')
 
-  @commands.command(name='Meth')
-  @commands.check(validate_user)
+##############################################################################################################
+##############################################################################################################
+####################################### ADMIN UTILITY ########################################################
+##############################################################################################################
+##############################################################################################################
+    
+  @commands.command(name="enableErrors")
+  @commands.has_permissions(administrator=True)
+  async def enable_error(self, ctx):
+    self.print_errors = True
+    await ctx.send("Errors reports enabled")
+
+  @commands.command(name="disableErrors")
+  @commands.has_permissions(administrator=True)
+  async def disable_error(self, ctx):
+    self.print_errors = False
+    await ctx.send("Errors reports disabled")
+
+  @commands.command(name="enableSafety")
+  @commands.has_permissions(administrator=True)
+  async def enable_safety(self, ctx):
+    self.safety = True
+
+  @commands.command(name="enableVerbose")
+  @commands.has_permissions(administrator=True)
+  async def enable_verbosity(self, ctx):
+    self.verbose = True
+
+  @commands.command(name="disableVerbose")
+  @commands.has_permissions(administrator=True)
+  async def disable_verbosity(self, ctx):
+    self.verbose = False
+
+  @commands.command(name="disableSafety")
+  @commands.has_permissions(administrator=True)
+  async def disable_safety(self, ctx):
+    self.safety = False
+    
+  @commands.command(name='help')
   async def help(self, ctx):
     
     await ctx.send(
       """
       ```
-      tweet: (Message) 😉
-      tweetImg: (Image url, Message) 😋
-      reply: (Tweet url, Message) 👅
-      replyImg: (Tweet url, Image url, Message) 🍆
-      quote: (Tweet url, Message) 💦
-      quoteImg: (Tweet url, Image url, Message) 👍  
+      tweet: (Message) 
+      tweetImg: (Image url, Message) 
+      reply: (Tweet url, Message) 
+      replyImg: (Tweet url, Image url, Message) 
+      quote: (Tweet url, Message) 
+      quoteImg: (Tweet url, Image url, Message)   
       ```
       """)
+
+##############################################################################################################
+##############################################################################################################
+####################################### END ##################################################################
+##############################################################################################################
+##############################################################################################################
     
   @commands.Cog.listener()
   async def on_command_error(self, ctx, error):
-    await ctx.send("https://cdn.discordapp.com/attachments/612361044110868480/1000656940847878144/IMG_0945.jpg")
+    if self.print_errors:
+      await ctx.send("https://cdn.discordapp.com/attachments/612361044110868480/1000656940847878144/IMG_0945.jpg")
     
