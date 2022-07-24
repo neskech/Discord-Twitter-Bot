@@ -31,6 +31,7 @@ A discord bot designed to be hosted on replit. Utilizes the tweepy api to allow 
       - disableVerbose: Disables verbosity
       - enableErrors: Enables error info printing when an error occurs
       - disableErrors: Disables error printing
+      - help: (can be used by anyone). Prints tweet command information
 
 # Errors
 
