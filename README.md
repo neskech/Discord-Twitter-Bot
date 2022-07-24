@@ -35,4 +35,5 @@ A discord bot designed to be hosted on replit. Utilizes the tweepy api to allow 
 # Errors
 
  -Upon receiving an error, a high quality image of Saul Goodman from Breaking Bad™ will be printed
+ 
  ![](./img/Saul.jpg)
