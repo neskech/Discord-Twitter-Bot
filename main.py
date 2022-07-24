@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 from cogs import twitter
-from Server import sustain
 import os
 
 client = commands.Bot(intents = discord.Intents.all(), command_prefix='!')
@@ -13,5 +12,4 @@ client = commands.Bot(intents = discord.Intents.all(), command_prefix='!')
 ##############################################################################################################
 
 client.add_cog(twitter.Twitter(client))
-sustain()
 client.run(os.environ['TOKEN'])
