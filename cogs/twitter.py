@@ -5,6 +5,7 @@ import requests
 from .tCommands import Tweet, TweetWithImage, Reply, ReplyWithImage, QuoteRetweet, QuoteRetweetWithImage
 import os
 
+#your keys go here! This will link the twitter account you want to control
 con_key = "" 
 con_sec = ""
 acc_tok = ""
