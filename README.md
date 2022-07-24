@@ -11,7 +11,7 @@ A discord bot designed to be hosted on replit. Utilizes the tweepy api to allow 
       - quote: (Tweet url, Message) 
       - quoteImg: (Tweet url, Image url, Message) 
       
- #Safety
+ # Safety
  
  The bot contains a safety system to allow a specific user validate tweets members create with the bot. This designated user (or an administrator) can    display a list of all of the pending tweets and choose which ones they wish to send out
  
