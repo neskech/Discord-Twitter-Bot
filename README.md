@@ -27,7 +27,7 @@ A discord bot designed to be hosted on replit. Utilizes the tweepy api to allow 
   -
       - enableSafety: Enables the safety system (on by default)
       - enableSafety: Disables the safety system. Tweets are immediately sent out after a user requests one
-      - enableVerbose: Enables verbosity. When verbose is true, commands to_strings() will print url's. In addition, executing commands will print the command executed
+      - enableVerbose: Enables verbosity. When verbose is true, commands to_strings() will print url's
       - disableVerbose: Disables verbosity
       - enableErrors: Enables error info printing when an error occurs
       - disableErrors: Disables error printing
@@ -35,3 +35,4 @@ A discord bot designed to be hosted on replit. Utilizes the tweepy api to allow 
 # Errors
 
  -Upon receiving an error, a high quality image of Saul Goodman from Breaking Bad™ will be printed
+ ![](./img/Saul.jpg)
