@@ -12,4 +12,4 @@ client = commands.Bot(intents = discord.Intents.all(), command_prefix='!')
 ##############################################################################################################
 
 client.add_cog(twitter.Twitter(client))
-client.run(os.environ['TOKEN'])
+client.run('') #BOT key goes here.
