@@ -5,12 +5,10 @@ import requests
 from .tCommands import Tweet, TweetWithImage, Reply, ReplyWithImage, QuoteRetweet, QuoteRetweetWithImage
 import os
 
-#your keys go here! This will link the twitter account you want to control
 con_key = "" 
 con_sec = ""
 acc_tok = ""
 acc_sec = ""
-bearer = ""
 
 ##############################################################################################################
 ##############################################################################################################
@@ -38,7 +36,7 @@ class Twitter(commands.Cog):
     self.init_tweepy()
     self.commands = []
     
-    self.safety = False
+    self.safety = True
     self.print_errors = True
     self.verbose = True
 
@@ -57,12 +55,13 @@ class Twitter(commands.Cog):
   async def on_ready(self):
     print("Bot started!")
 
-  def execute_command_(self, ctx):
-    if len(self.commands) > 0:
+  async def execute_command_(self, ctx):
+    if len(self.commands) > 0: 
       command = self.commands[0]
       self.commands = self.commands[1:]
       result = command.execute(self.api)
       await ctx.send(f'```executed command -> {command.__str__(1)}```\n{result}' if self.verbose else f'{result}')
+      return
       
     await ctx.send('No more commands to execute 😈')
 
@@ -80,7 +79,7 @@ class Twitter(commands.Cog):
     if self.safety:
       await ctx.send("❤️")
     else:
-      self.execute_command(ctx)
+      await self.execute_command_(ctx)
 
   @commands.command(name='reply')
   async def reply(self, ctx, url, *args):
@@ -90,7 +89,7 @@ class Twitter(commands.Cog):
     if self.safety:
       await ctx.send("❤️")
     else:
-      self.execute_command(ctx)
+      await self.execute_command_(ctx)
 
   @commands.command(name='quote')
   async def quote_retweet(self, ctx, url, *args):
@@ -100,7 +99,7 @@ class Twitter(commands.Cog):
     if self.safety:
       await ctx.send("❤️")
     else:
-      self.execute_command(ctx)
+      await self.execute_command_(ctx)
 
   @commands.command(name='friend')
   async def friend(self, ctx, *args):
@@ -119,7 +118,7 @@ class Twitter(commands.Cog):
         if self.safety:
           await ctx.send("❤️")
         else:
-          self.execute_command(ctx)
+          await self.execute_command_(ctx)
     else:
         await ctx.send("Unable to retrieve image 😈")
 
@@ -134,7 +133,7 @@ class Twitter(commands.Cog):
         if self.safety:
           await ctx.send("❤️")
         else:
-          self.execute_command(ctx)
+          await self.execute_command_(ctx)
     else:
         await ctx.send("Unable to retrieve image 😈")
 
@@ -149,7 +148,7 @@ class Twitter(commands.Cog):
         if self.safety:
           await ctx.send("❤️")
         else:
-          self.execute_command(ctx)
+          await self.execute_command_(ctx)
     else:
         await ctx.send("Unable to retrieve image 😈")
 
@@ -173,7 +172,7 @@ class Twitter(commands.Cog):
   @commands.command(name='execC')
   @commands.has_permissions(administrator=True)
   async def exec_command(self, ctx):
-    self.execute_command_(ctx)
+    await self.execute_command_(ctx)
 
   @commands.command(name='listC')
   @commands.has_permissions(administrator=True)
@@ -209,23 +208,27 @@ class Twitter(commands.Cog):
   @commands.has_permissions(administrator=True)
   async def enable_safety(self, ctx):
     self.safety = True
-
-  @commands.command(name="enableVerbose")
-  @commands.has_permissions(administrator=True)
-  async def enable_verbosity(self, ctx):
-    self.verbose = True
-
-  @commands.command(name="disableVerbose")
-  @commands.has_permissions(administrator=True)
-  async def disable_verbosity(self, ctx):
-    self.verbose = False
+    await ctx.send("Safety Enabled")
 
   @commands.command(name="disableSafety")
   @commands.has_permissions(administrator=True)
   async def disable_safety(self, ctx):
     self.safety = False
+    await ctx.send("Safety Disabled")
     
-  @commands.command(name='help')
+  @commands.command(name="enableVerbose")
+  @commands.has_permissions(administrator=True)
+  async def enable_verbosity(self, ctx):
+    self.verbose = True
+    await ctx.send("Verbose enabled")
+
+  @commands.command(name="disableVerbose")
+  @commands.has_permissions(administrator=True)
+  async def disable_verbosity(self, ctx):
+    self.verbose = False
+    await ctx.send("Verbose disabled")
+
+  @commands.command(name='twitterBotHelp')
   async def help(self, ctx):
     
     await ctx.send(
