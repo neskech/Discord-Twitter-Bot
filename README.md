@@ -26,7 +26,7 @@ A discord bot designed to be hosted on replit. Utilizes the tweepy api to allow 
 - Admin Utility Commands
   -
       - enableSafety: Enables the safety system (on by default)
-      - enableSafety: Disables the safety system. Tweets are immediately sent out after a user requests one
+      - disableSafety: Disables the safety system. Tweets are immediately sent out after a user requests one
       - enableVerbose: Enables verbosity. When verbose is true, commands to_strings() will print url's
       - disableVerbose: Disables verbosity
       - enableErrors: Enables error info printing when an error occurs
