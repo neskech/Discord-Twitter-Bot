@@ -41,4 +41,4 @@ A discord bot designed to be hosted on replit. Utilizes the tweepy api to allow 
  
  ![](./img/Saul.jpg)
  
- *Some things to note: Making duplicate tweets will result in errors. *
+ *Some things to note: Making duplicate tweets will result in errors*
