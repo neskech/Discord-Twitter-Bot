@@ -2,7 +2,7 @@
 
 A discord bot designed to be hosted on replit. Utilizes the tweepy api to allow users to create simple tweets for a specific account
 
--- *NOTE This project uses V 1.1 of the twitter api via tweepy. In order to use this, you'll need to apply for 'elevated' access on twitter's developer portal* 
+*Note, this project uses V 1.1 of the twitter api via tweepy. In order to use this, you'll need to apply for 'elevated' access on twitter's developer portal* 
 
 - Commands (prefaced by !)
   -
